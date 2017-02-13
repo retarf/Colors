@@ -1,0 +1,136 @@
+#include <GL/glut.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <map>
+
+#include "consoleinterface.h"
+
+enum
+{
+    EXIT
+};
+
+std::map <char, float> BottomLeftColor;
+std::map <char, float> TopLeftColor;
+std::map <char, float> TopRightColor;
+std::map <char, float> BottomRightColor;
+
+void DrawString( GLfloat x, GLfloat y, char * string )
+{
+    // po�o�enie napisu
+//    glRasterPos2f( x, y );
+
+    // wy�wietlenie napisu
+    int len = strlen( string );
+    for( int i = 0; i < len; i++ )
+         glutBitmapCharacter( GLUT_BITMAP_9_BY_15, string[ i ] );
+
+}
+
+void Display()
+{
+    glClearColor( 0.0, 0.0, 0.0, 0.0 );
+    glClear( GL_COLOR_BUFFER_BIT );
+
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+
+    glShadeModel( GL_SMOOTH );
+
+
+    glBegin( GL_POLYGON );
+
+    // Left Bottom Vertex
+    glVertex3f(1, -1, 0);
+    glColor3f( BottomLeftColor['r'], BottomLeftColor['g'], BottomLeftColor['b'] );
+
+    // Left Top Vertex
+    glVertex3f(-1, -1, 0);
+    glColor3f( TopLeftColor['r'], TopLeftColor['g'], TopLeftColor['b'] );
+
+    // Right Top Vertex
+    glVertex3f(-1, 1, 0);
+    glColor3f( TopRightColor['r'], TopRightColor['g'], TopRightColor['b'] );
+
+    // Right Bottom Vertex
+    glVertex3f(1, 1, 0);
+    glColor3f( BottomRightColor['r'], BottomRightColor['g'], BottomRightColor['b'] );
+
+    glEnd();
+
+
+    std::cout << "BLC B: " << BottomLeftColor['b'] << " ";
+    std::cout << "BLC G: " << BottomLeftColor['g'] << " ";
+    std::cout << "BLC R: " << BottomLeftColor['r'] << " ";
+    std::cout << std::endl;
+
+    std::cout << "TLC B: " << TopLeftColor['b'] << " ";
+    std::cout << "TLC G: " << TopLeftColor['g'] << " ";
+    std::cout << "TLC R: " << TopLeftColor['r'] << " ";
+    std::cout << std::endl;
+
+    std::cout << "TRC B: " << TopRightColor['b'] << " ";
+    std::cout << "TRC G: " << TopRightColor['g'] << " ";
+    std::cout << "TRC R: " << TopRightColor['r'] << " ";
+    std::cout << std::endl;
+
+    std::cout << "BRC B: " << BottomRightColor['b'] << " ";
+    std::cout << "BRC G: " << BottomRightColor['g'] << " ";
+    std::cout << "BRC R: " << BottomRightColor['r'] << " ";
+    std::cout << std::endl;
+
+    glFlush();
+    glutSwapBuffers();
+}
+
+void Menu( int value )
+{
+    switch( value )
+    {
+    case EXIT:
+        exit( 0 );
+    }
+}
+
+int main( int argc, char * argv[] )
+{
+
+
+    int width = 500;
+    int height = 500;
+
+    ConsoleInterface interface;
+
+    BottomLeftColor = interface.getBottomLeftColor();
+    TopLeftColor = interface.getTopLeftColor();
+    TopRightColor = interface.getTopRightColor();
+    BottomRightColor = interface.getBottomRightColor();
+
+    glutInit( & argc, argv );
+
+    glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB );
+
+    glutInitWindowSize( width, height );
+
+    glutCreateWindow( "ColorDisplay" );
+
+    glViewport( 0, 0, width, height );
+
+    glutDisplayFunc( Display );
+
+    glutCreateMenu( Menu );
+
+    #ifdef WIN32
+
+    glutAddMenuEntry( "Wyj�cie", EXIT );
+    #else
+
+    glutAddMenuEntry( "Wyjscie", EXIT );
+    #endif
+
+    glutAttachMenu( GLUT_RIGHT_BUTTON );
+
+    glutMainLoop();
+    return 0;
+}
